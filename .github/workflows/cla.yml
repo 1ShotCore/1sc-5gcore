@@ -1,0 +1,43 @@
+name: CLA
+
+# pull_request_target so the check can comment on PRs from forks.
+# Safe because it only checks out the base branch, never the PR's code.
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  cla:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check that the PR author has signed a CLA
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          ASSOC: ${{ github.event.pull_request.author_association }}
+          PR: ${{ github.event.pull_request.number }}
+          ACTION: ${{ github.event.action }}
+        # ponytail: checks the PR author only, not every commit author. Check commit authors if co-authored PRs become common.
+        run: |
+          if [ "$ASSOC" = OWNER ] || [ "$ASSOC" = MEMBER ]; then
+            echo "$AUTHOR is a 1ShotCore member. Skipping."; exit 0
+          fi
+          if sed 's/#.*//; s/[[:space:]]//g' .github/CLA_SIGNERS | grep -qixF -- "$AUTHOR"; then
+            echo "$AUTHOR has a CLA on file."; exit 0
+          fi
+          if [ "$ACTION" != synchronize ]; then
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body "Thanks for the PR, @$AUTHOR! Before we can merge it, we need a signed Contributor License Agreement (CLA) from you.
+
+          - **Contributing as yourself:** sign the [Individual CLA]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/main/legal/cla/1sc-icla.pdf).
+          - **Contributing for your employer:** have your company sign the [Corporate CLA]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/main/legal/cla/1sc-cla-corporate.pdf) and list you on Schedule A.
+
+          Email the signed PDF to **js@l9.fyi** and include your GitHub username. Once we add you to the signer list, this check passes. You only need to sign once. See [CONTRIBUTING.md]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/main/CONTRIBUTING.md) for details."
+          fi
+          echo "::error::No CLA on file for $AUTHOR. See CONTRIBUTING.md."
+          exit 1

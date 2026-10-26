@@ -1,0 +1,10 @@
+# GitHub usernames with a signed CLA on file at L9 Technologies LLC.
+# One username per line. Case-insensitive. Text after # is ignored.
+#
+# Individual CLA: add the signer's username.
+# Corporate CLA: add each Schedule A employee and note the company, e.g.
+#   octocat  # Acme Corp CCLA, 2026-10-26
+#
+# Org owners and members of 1ShotCore are exempt from the check.
+
+dependabot[bot]
