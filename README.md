@@ -49,7 +49,7 @@ Pure Rust. No memory-safety bugs in the code that handles every packet.
 
 ### Benchmarks
 
-Measured 2026-10-11 with [UERANSIM](https://github.com/aligungr/UERANSIM) on the same host.
+Measured 2026-10-11 with [UERANSIM](https://github.com/aligungr/UERANSIM) on the same host. The test harness runs on [1sc.dev](https://1sc.dev).
 
 | CPUs | 1sc downlink | Open5GS downlink | Core memory (1sc / Open5GS) | p99 RTT (1sc / Open5GS) |
 |:---:|---:|---:|:---:|:---:|
